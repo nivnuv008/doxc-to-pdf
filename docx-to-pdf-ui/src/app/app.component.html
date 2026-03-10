@@ -1,0 +1,28 @@
+<div class="app-container">
+  <h1>DOCX to PDF Converter</h1>
+
+  <p>Select a Word document and convert it to PDF using the server.</p>
+
+  <div class="form-group">
+    <input
+      type="file"
+      accept=".doc,.docx,.odt,.rtf,.txt"
+      (change)="onFileSelected($event)"
+    />
+  </div>
+
+  <div class="actions">
+    <button (click)="onConvert()" [disabled]="!selectedFile || isConverting">
+      {{ isConverting ? 'Converting...' : 'Convert to PDF' }}
+    </button>
+  </div>
+
+  <div class="status" *ngIf="selectedFile">
+    <strong>Selected file:</strong> {{ selectedFile.name }}
+  </div>
+
+  <div class="error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
+
