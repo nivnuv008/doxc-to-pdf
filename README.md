@@ -3,7 +3,7 @@
 This project provides:
 
 - An Angular frontend (`docx-to-pdf-ui`) to upload a DOCX file and download the converted PDF.
-- A FastAPI backend (`converter-backend`) that uses `unoconvert` from [`unoserver`](https://github.com/unoconv/unoserver/) to convert documents via LibreOffice.
+- A FastAPI backend (`converter-backend`) that prefers native Microsoft Word conversion for `.docx` files on macOS/Windows when available, then falls back to `unoconvert`, and finally to direct LibreOffice conversion.
 
 ## Folder structure
 
@@ -28,6 +28,16 @@ This project provides:
    This serves the app at `http://localhost:4200`.
 
 The Angular app is configured (via `environment.ts`) to call the backend at `http://localhost:8000`.
+
+## Backend conversion options
+
+The backend now supports two conversion paths:
+
+1. Native Microsoft Word conversion for `.docx` files on macOS/Windows via `docx2pdf`.
+2. `unoconvert` + `unoserver`.
+3. Direct LibreOffice conversion with `soffice --headless`.
+
+If Word is available, the backend uses that first for `.docx` files because it preserves complex layout, RTL text, and shapes more reliably. Otherwise it tries `unoconvert`, and if that is unavailable it automatically tries LibreOffice directly.
 
 ## Setting up LibreOffice + unoserver on the backend server
 
@@ -62,10 +72,12 @@ The Angular app is configured (via `environment.ts`) to call the backend at `htt
    - `UNOSERVER_HOST` (default `127.0.0.1`)
    - `UNOSERVER_PORT` (default `2003`)
    - `ALLOWED_ORIGINS` (comma-separated list; default `http://localhost:4200`)
+   - `LIBREOFFICE_BINARY` (optional absolute path to `soffice`; useful on macOS if it is not on `PATH`)
+   - `PREFER_WORD_CONVERSION` (default `true`; set to `false` to skip the native Word conversion path)
 
 ## Using the application
 
-1. Ensure **unoserver** is running and LibreOffice is installed on the backend server.
+1. Ensure LibreOffice is installed. If you want to use `unoserver`, ensure that is running too.
 2. Start the FastAPI backend on port 8000.
 3. Start the Angular dev server.
 4. Visit `http://localhost:4200`, select a DOCX (or supported) file and click **Convert to PDF**.

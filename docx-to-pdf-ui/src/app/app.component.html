@@ -13,7 +13,10 @@
 
   <div class="actions">
     <button (click)="onConvert()" [disabled]="!selectedFile || isConverting">
-      {{ isConverting ? 'Converting...' : 'Convert to PDF' }}
+      {{ isConverting ? 'ממיר...' : 'המר ל-PDF' }}
+    </button>
+    <button class="secondary" (click)="onConvertWithCover()" [disabled]="!selectedFile || isConverting">
+      {{ isConverting ? 'ממיר...' : 'המר + הוסף עמוד שער (מוק דאטא)' }}
     </button>
   </div>
 

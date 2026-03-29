@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    declarations: [AppComponent]
+    declarations: [AppComponent],
+    imports: [HttpClientTestingModule],
   }));
 
   it('should create the app', () => {
@@ -12,16 +14,13 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'docx-to-pdf-ui'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('docx-to-pdf-ui');
-  });
-
-  it('should render title', () => {
+  it('should render both conversion buttons', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('docx-to-pdf-ui app is running!');
+    const buttons = Array.from(compiled.querySelectorAll('button')).map((button) => button.textContent?.trim());
+
+    expect(buttons).toContain('המר ל-PDF');
+    expect(buttons).toContain('המר + הוסף עמוד שער (מוק דאטא)');
   });
 });
