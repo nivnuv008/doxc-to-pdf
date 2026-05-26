@@ -15,8 +15,11 @@
     <button (click)="onConvert()" [disabled]="!selectedFile || isConverting">
       {{ isConverting ? 'ממיר...' : 'המר ל-PDF' }}
     </button>
-    <button class="secondary" (click)="onConvertWithCover()" [disabled]="!selectedFile || isConverting">
-      {{ isConverting ? 'ממיר...' : 'המר + הוסף עמוד שער (מוק דאטא)' }}
+    <button class="secondary" (click)="onConvertWithOpeningAndClosingPages()" [disabled]="!selectedFile || isConverting">
+      {{ isConverting ? 'ממיר...' : 'המר + הוסף עמוד פתיחה ועמוד סיום' }}
+    </button>
+    <button class="secondary" (click)="onConvertWithWatermarkOnAllPages()" [disabled]="!selectedFile || isConverting">
+      {{ isConverting ? 'ממיר...' : 'המר + הוסף סימן מים לכל העמודים' }}
     </button>
   </div>
 

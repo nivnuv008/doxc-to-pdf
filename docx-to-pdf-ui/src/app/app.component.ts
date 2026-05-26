@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConversionService } from './conversion.service';
-import { PdfCoverService } from './pdf-cover.service';
+import { CoverTopHeaderData, PdfCoverService } from './pdf-cover.service';
 
 @Component({
   selector: 'app-root',
@@ -32,28 +32,41 @@ export class AppComponent {
       return;
     }
 
-    this.runConversion(false);
+    this.runConversion('plain');
   }
 
-  onConvertWithCover(): void {
+  onConvertWithOpeningAndClosingPages(): void {
     if (!this.selectedFile) {
       this.errorMessage = 'Please select a DOCX file first.';
       return;
     }
 
-    this.runConversion(true);
+    this.runConversion('opening-and-closing');
   }
 
-  private runConversion(addCoverPage: boolean): void {
+  onConvertWithWatermarkOnAllPages(): void {
+    if (!this.selectedFile) {
+      this.errorMessage = 'Please select a DOCX file first.';
+      return;
+    }
+
+    this.runConversion('watermark-all-pages');
+  }
+
+  private runConversion(mode: 'plain' | 'opening-and-closing' | 'watermark-all-pages'): void {
     this.isConverting = true;
     this.errorMessage = '';
 
     this.conversionService.convertToPdf(this.selectedFile!).subscribe({
       next: async (blob: Blob) => {
         try {
-          const outputBlob = addCoverPage
-            ? await this.pdfCoverService.prependMockCover(blob)
-            : blob;
+          let outputBlob = blob;
+          if (mode === 'opening-and-closing') {
+            const withOpeningPage = await this.pdfCoverService.prependMockCover(blob, this.buildTopHeaderData());
+            outputBlob = await this.pdfCoverService.appendMockClosingPage(withOpeningPage, this.buildTopHeaderData());
+          } else if (mode === 'watermark-all-pages') {
+            outputBlob = await this.pdfCoverService.addWatermarkToAllPages(blob);
+          }
 
           this.isConverting = false;
           const url = window.URL.createObjectURL(outputBlob);
@@ -67,7 +80,7 @@ export class AppComponent {
           window.URL.revokeObjectURL(url);
         } catch {
           this.isConverting = false;
-          this.errorMessage = 'Creating the cover page failed. Please try again later.';
+          this.errorMessage = 'Creating the extra page failed. Please try again later.';
         }
       },
       error: async (error: HttpErrorResponse) => {
@@ -98,5 +111,14 @@ export class AppComponent {
     }
 
     return 'Conversion failed. Please try again later.';
+  }
+
+  private buildTopHeaderData(): CoverTopHeaderData {
+    return {
+      securityLabel: 'שמור',
+      unitName: 'מפת"ח',
+      branchName: 'ענף דיגיטל',
+      sectionName: 'מדור PDM',
+    };
   }
 }

@@ -14,13 +14,13 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render both conversion buttons', () => {
+  it('should render the regular and combined conversion buttons', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const buttons = Array.from(compiled.querySelectorAll('button')).map((button) => button.textContent?.trim());
 
     expect(buttons).toContain('המר ל-PDF');
-    expect(buttons).toContain('המר + הוסף עמוד שער (מוק דאטא)');
+    expect(buttons).toContain('המר + הוסף עמוד פתיחה ועמוד סיום');
   });
 });
